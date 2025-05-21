@@ -45,3 +45,14 @@ main_kb2 = InlineKeyboardMarkup(
         ]
     ]
 )
+
+
+admin_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="Добавить", callback_data="add"),
+            InlineKeyboardButton(text="Удалить", callback_data="del"),
+            InlineKeyboardButton(text="Изменить", callback_data="change")
+        ]
+    ]
+)

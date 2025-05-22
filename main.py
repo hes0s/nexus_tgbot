@@ -8,8 +8,7 @@ import asyncio
 from kb import main_kb, admin_kb
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from db1 import conn, cursor
-from db2 import conn_f, cursor_f, food_insert
+from db2 import food_insert, food_del, food_change
 
 bot = Bot(
     token='8003890596:AAGG1lvosdjD38_atfrdiTO_mZ4Jdf9fekU',
@@ -104,6 +103,13 @@ class add_product(StatesGroup):
     name=State()
     price=State()
 
+class del_prod(StatesGroup):
+    namee=State()
+
+class change_prod(StatesGroup):
+    prod_name=State()
+    name=State()
+    price=State()
 
 
 @dp.message(Command("admin"))
@@ -112,12 +118,36 @@ async def admin_handler(message: Message):
 @dp.message(F.text == "13211")
 async def admin_handler(message: Message):
     await message.answer("Ты в админке", reply_markup=admin_kb)
-
+                                                                        #### ADD & CHANGE PART ####
 @dp.callback_query(F.data == "add")
 async def add_name(message: Message, state: FSMContext ):
     await message.answer("Привет! Чтобы добваить новый продукт напиши тут название: ")
     await state.set_state(add_product.name)
 
+@dp.callback_query(F.data=="change")
+async def change_by_name(message: Message, state:FSMContext):
+    await state.set_state(change_prod.prod_name)
+    await message.answer("Напишите имя продукта который вы хотите изменить")
+
+@dp.message(change_prod.prod_name)
+async def change_name(message: Message, state: FSMContext):
+    await state.update_data(prod_name=message.text)
+    await message.answer("Напишите новое имя для данного продукта")
+    await state.set_state(change_prod.name)
+
+@dp.message(change_prod.name)
+async def change_price(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+    await message.answer("Введи новую цену")
+    await state.set_state(change_prod.price)
+
+@dp.message(change_prod.price)
+async def get_a_data(message: Message, state: FSMContext):
+    await state.update_data(price=message.text)
+    data = await state.get_data()
+    food_change(data["prod_name"], data["name"], data["price"])
+    await message.answer("Данные изменены")
+                                                                        ##### CHANGE PART #####
 @dp.message(add_product.name)
 async def add_price(message: Message, state: FSMContext):
     await message.answer("Мне ещё нужна цена этого продукта: ")
@@ -132,6 +162,23 @@ async def all_data(message: Message, state: FSMContext):
     await message.answer(str(data))
     food_insert(data["name"], data["price"])
     await message.answer("Данные сохраненны в базе данных")
+                                                                        ##################
+
+                                                                        ###### DELETE PART ######
+@dp.callback_query(F.data=="del")
+async def pred_del(message: Message, state: FSMContext):
+    await message.answer("Напишите имя продукта который вы хотите удалить")
+    await state.set_state(del_prod.namee)
+
+@dp.message(del_prod.namee)
+async def dell(message: Message, state: FSMContext):
+    await state.update_data(namee=message.text)
+    name = await state.get_data()
+    food_del(name["namee"])
+    await message.answer("Удалили успешно")    
+                                                                        #########################
+
+
 
 async def main():
     await dp.start_polling(bot)

@@ -8,7 +8,7 @@ import asyncio
 from kb import main_kb, admin_kb
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from db2 import food_insert, food_del, food_change
+from db2 import food_insert, food_del, food_change, food_show 
 
 bot = Bot(
     token='8003890596:AAGG1lvosdjD38_atfrdiTO_mZ4Jdf9fekU',
@@ -72,18 +72,12 @@ async def cancel(message: Message, state: FSMContext):
 async def start_com(message: Message):
     await message.answer("Привет, это бот для заказа еды", reply_markup=main_kb)
 
-@dp.message(Command("admin"))
-async def admin_(message:Message):
-    await message.answer("Если ты админ напиши пароль: ")
-
-@dp.message(F.text=="1234")
-async def admin__(message:Message):
-    await message.answer("Ты теперь админ")
-
 @dp.message(F.text == "Меню")
 async def ech(message: Message):
     await message.answer("Вот ваше меню)", reply_markup=main_kb)
+    food_show() 
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
+
 
 @dp.message(F.text == "О нас")
 async def ec(message: Message):

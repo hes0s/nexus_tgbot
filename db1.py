@@ -4,7 +4,7 @@ conn = sqlite3.connect("orders.db")
 cursor = conn.cursor()
 
 cursor.execute('''
-    CREATE TABLE IF NOT EXISTS oscd (
+    CREATE TABLE IF NOT EXISTS order(
               id INTEGER PRIMARY KEY,
               food_type TEXT,
               name_client TEXT,

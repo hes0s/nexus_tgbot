@@ -34,16 +34,3 @@ def food_change(prod_name, name, price):
     cursor_f.execute("UPDATE food SET name = ?, price = ? WHERE name = ?", (name, price, prod_name))
     conn_f.commit()
     conn_f.close()    
-
-conn_f = sqlite3.connect("food.db")
-cursor_f = conn_f.cursor()
-cursor_f.execute("SELECT * FROM food")
-conn_f.commit()
-conn_f.close()
-    
-def food_show():
-    conn_f = sqlite3.connect("food.db")
-    cursor_f = conn_f.cursor()
-    cursor_f.execute("SELECT * FROM food")
-    conn_f.commit()
-    conn_f.close()    

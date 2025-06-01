@@ -48,9 +48,9 @@ async def cancel(message: Message, state: FSMContext):
     await message.answer("Анкета отменена.")
 
 """
-from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
+from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram import F
@@ -62,11 +62,18 @@ from kb import (
 )
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from db2 import food_insert, food_del, food_change
+from database.db2 import food_insert, food_del, food_change
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 bot = Bot(
     token='8003890596:AAGG1lvosdjD38_atfrdiTO_mZ4Jdf9fekU',
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
+dp = Dispatcher()
+
+
+bot = Bot(
+    token='Ваш токен с BotFather',
     default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
 dp = Dispatcher()
@@ -91,6 +98,10 @@ class OrderFSM(StatesGroup):
 @dp.message(Command("start"))
 async def start_com(message: Message):
     await message.answer("Привет, это бот для заказа еды", reply_markup=main_kb)
+
+
+
+
 
 @dp.message(F.text == "Меню")
 async def show_menu(message: Message):
